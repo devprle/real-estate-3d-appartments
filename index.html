@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <title>Green Cube Click Demo</title>
+  <style>
+    body {
+      margin: 0;
+      overflow: hidden;
+    }
+  </style>
+</head>
+<body>
+<script src="https://cdn.jsdelivr.net/npm/three@0.131.2/build/three.min.js"></script>
+<script>
+  // Set up the scene, camera, and renderer
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(
+          75,
+          window.innerWidth / window.innerHeight,
+          0.1,
+          1000
+  );
+  const renderer = new THREE.WebGLRenderer();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  document.body.appendChild(renderer.domElement);
+
+  // Create the cube and add it to the scene
+  const geometry = new THREE.BoxGeometry();
+  const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
+  const cube = new THREE.Mesh(geometry, material);
+  scene.add(cube);
+
+  // Set the camera position and add it to the scene
+  camera.position.z = 5;
+  scene.add(camera);
+
+  // Define the cubeClick function
+  function cubeClick() {
+    console.log("Cube clicked!");
+  }
+
+  // Set up the raycaster to detect clicks on the cube
+  const raycaster = new THREE.Raycaster();
+  const mouse = new THREE.Vector2();
+  function onMouseDown(event) {
+    event.preventDefault();
+    mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+    mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+    raycaster.setFromCamera(mouse, camera);
+    const intersects = raycaster.intersectObjects(scene.children, true);
+    for (let i = 0; i < intersects.length; i++) {
+      if (intersects[i].object === cube) {
+        cubeClick();
+      }
+    }
+  }
+  document.addEventListener("mousedown", onMouseDown, false);
+
+  // Define the animate function
+  function animate() {
+    requestAnimationFrame(animate);
+    renderer.render(scene, camera);
+  }
+
+  // Call the animate function to start rendering the scene
+  animate();
+</script>
+</body>
+</html>
